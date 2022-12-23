@@ -1,15 +1,18 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  MutableRefObject,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import useSound from "use-sound";
 
 function Clock() {
-  const inputMin = useRef<HTMLInputElement>(null);
-  const inputSec = useRef<HTMLInputElement>(null);
-
   const [timerActive, setTimerActive] = useState(false);
   const [timerDone, setTimerDone] = useState(false);
-  const [seconds, setSeconds] = useState<number>(14);
-  const [minutes, setMinutes] = useState<number>(1);
-  const [totalTime, setTotalTime] = useState<number>(seconds + minutes * 60);
+  const [seconds, setSeconds] = useState(0);
+  const [minutes, setMinutes] = useState(25);
+  const [totalTime, setTotalTime] = useState(seconds + minutes * 60);
   const [showAlarmBG, setShowAlarmBG] = useState(true);
   const [displayTimeSettings, setDisplayTimeSettings] = useState(false);
   const [play, { stop }] = useSound("EarlyRiser.mp3");
@@ -73,17 +76,17 @@ function Clock() {
           >
             Exit
           </div>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              setMinutes(20), setSeconds(40);
-            }}
-          >
+          <form className="space-y-4">
             <div className="flex space-x-4">
               <h1 className="text-white text-6xl font-bold">Minutes</h1>
               <input
-                ref={inputMin}
+                required={true}
+                name="minutes"
+                onChange={(e) => {
+                  setMinutes(e.target.valueAsNumber);
+                }}
                 type="number"
+                defaultValue={25}
                 min="0"
                 max="60"
                 className="bg-transparent border-4 outline-none rounded-xl text-center text-3xl py-4 font-bold text-white scroll-none"
@@ -92,14 +95,18 @@ function Clock() {
             <div className="flex space-x-4">
               <h1 className="text-white text-6xl font-bold">Seconds</h1>
               <input
-                ref={inputSec}
+                name="seconds"
+                onChange={(e) => {
+                  setSeconds(e.target.valueAsNumber);
+                }}
+                required={true}
                 type="number"
+                defaultValue={0}
                 min="0"
                 max="60"
                 className="bg-transparent border-4 outline-none rounded-xl text-center text-3xl py-4 font-bold text-white"
               />
             </div>
-            <input type="submit" />
           </form>
         </div>
       )}
@@ -126,7 +133,11 @@ function Clock() {
             onClick={() => setTimerActive(!timerActive)}
             className={`w-full sm:w-1/2 transition-all duration-700 px-4 py-10 xs: sm:rounded-l-xl cursor-pointer flex items-center justify-center 
           uppercase text-white font-extrabold text-4xl
-          ${!timerActive ? "bg-green-400" : "bg-red-400"} 
+          ${
+            !timerActive
+              ? "bg-green-400 hover:bg-green-500"
+              : "bg-red-400 hover:bg-red-500"
+          } 
         `}
           >
             {`${!timerActive ? "start" : "stop"}`}
@@ -137,7 +148,7 @@ function Clock() {
           className={`w-full sm:w-1/2 transition-all duration-700 px-4 py-10 ${
             timerDone ? "sm:w-full sm:rounded-xl" : "sm:rounded-r-xl"
           }  cursor-pointer flex items-center justify-center 
-          uppercase text-white font-extrabold text-4xl bg-yellow-400 text-center
+          uppercase text-white font-extrabold text-4xl bg-yellow-400 hover:bg-yellow-500 text-center
         `}
         >
           Restart Timer
