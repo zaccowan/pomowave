@@ -14,9 +14,8 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Nav />
-      <main className="w-full h-screen flex flex-1 items-center justify-center">
-        <Clock />
-      </main>
+      <Clock />
+      {/* <main className="w-full h-screen flex flex-1 items-center justify-center"></main> */}
     </>
   );
 }
