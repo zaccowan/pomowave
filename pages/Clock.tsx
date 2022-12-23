@@ -1,15 +1,29 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import useSound from "use-sound";
 
 function Clock() {
+  const inputMin = useRef<HTMLInputElement>(null);
+  const inputSec = useRef<HTMLInputElement>(null);
+
   const [timerActive, setTimerActive] = useState(false);
   const [timerDone, setTimerDone] = useState(false);
-  const [seconds, setSeconds] = useState(14);
-  const [minutes, setMinutes] = useState(1);
-  const [totalTime, setTotalTime] = useState(seconds + minutes * 60);
+  const [seconds, setSeconds] = useState<number>(14);
+  const [minutes, setMinutes] = useState<number>(1);
+  const [totalTime, setTotalTime] = useState<number>(seconds + minutes * 60);
   const [showAlarmBG, setShowAlarmBG] = useState(true);
   const [displayTimeSettings, setDisplayTimeSettings] = useState(false);
   const [play, { stop }] = useSound("EarlyRiser.mp3");
+
+  const resetTimer = useCallback(() => {
+    setTotalTime(seconds + minutes * 60);
+    setTimerActive(false);
+    setTimerDone(false);
+    stop();
+  }, [seconds, minutes, stop]);
+
+  useEffect(() => {
+    resetTimer();
+  }, [minutes, seconds, resetTimer]);
 
   useEffect(() => {
     const flash = setInterval(() => setShowAlarmBG(!showAlarmBG), 500);
@@ -24,13 +38,6 @@ function Clock() {
       stop();
     }
   }, [timerDone, stop]);
-
-  function resetTimer() {
-    setTotalTime(seconds + minutes * 60);
-    setTimerActive(false);
-    setTimerDone(false);
-    stop();
-  }
 
   useEffect(() => {
     function decrementTime() {
@@ -59,14 +66,41 @@ function Clock() {
       } `}
     >
       {displayTimeSettings && (
-        <div
-          onClick={() => setDisplayTimeSettings(!displayTimeSettings)}
-          className="z-50 absolute top-5 bottom-5 left-5 right-5 flex items-center justify-center rounded-xl bg-gray-400/50 backdrop-blur-sm"
-        >
-          <div className="flex space-x-4">
-            <h1 className="text-6xl font-bold">Minutes</h1>
-            <input type="text" className="bg-transparent border-4 rounded-xl" />
+        <div className="z-50 absolute top-5 bottom-5 left-5 right-5 flex flex-col space-y-8 items-center justify-center rounded-xl bg-gray-400/50 backdrop-blur-sm">
+          <div
+            onClick={() => setDisplayTimeSettings(!displayTimeSettings)}
+            className="absolute top-5 right-5 cursor-pointer"
+          >
+            Exit
           </div>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              setMinutes(20), setSeconds(40);
+            }}
+          >
+            <div className="flex space-x-4">
+              <h1 className="text-white text-6xl font-bold">Minutes</h1>
+              <input
+                ref={inputMin}
+                type="number"
+                min="0"
+                max="60"
+                className="bg-transparent border-4 outline-none rounded-xl text-center text-3xl py-4 font-bold text-white scroll-none"
+              />
+            </div>
+            <div className="flex space-x-4">
+              <h1 className="text-white text-6xl font-bold">Seconds</h1>
+              <input
+                ref={inputSec}
+                type="number"
+                min="0"
+                max="60"
+                className="bg-transparent border-4 outline-none rounded-xl text-center text-3xl py-4 font-bold text-white"
+              />
+            </div>
+            <input type="submit" />
+          </form>
         </div>
       )}
 
