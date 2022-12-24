@@ -64,7 +64,7 @@ function Clock({ setPomodoroTime }) {
   }, [timerActive, totalTime, play]);
 
   return (
-    <main className="">
+    <main className="overflow-hidden">
       <CanvasBG />
       {/* <div className="-z-10 absolute top-0 bottom-0 left-0 right-0 bg-white">
         <div class="custom-shape-divider-bottom-1671858560">
