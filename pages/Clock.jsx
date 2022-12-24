@@ -1,13 +1,7 @@
-import React, {
-  MutableRefObject,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import useSound from "use-sound";
 
-function Clock() {
+function Clock({ setPomodoroTime }) {
   const [timerActive, setTimerActive] = useState(false);
   const [timerDone, setTimerDone] = useState(false);
   const [seconds, setSeconds] = useState(0);
@@ -27,6 +21,11 @@ function Clock() {
   useEffect(() => {
     resetTimer();
   }, [minutes, seconds, resetTimer]);
+
+  //Sending State back to Head
+  useEffect(() => {
+    setPomodoroTime(totalTime);
+  }, [totalTime, setPomodoroTime]);
 
   useEffect(() => {
     const flash = setInterval(() => setShowAlarmBG(!showAlarmBG), 500);
