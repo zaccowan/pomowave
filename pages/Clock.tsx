@@ -1,9 +1,19 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { XCircleIcon } from "@heroicons/react/24/outline";
 import useSound from "use-sound";
 import CanvasBG from "./CanvasBG";
 
-function Clock({ setPomodoroTime }) {
+function Clock({
+  setPomodoroTime,
+}: {
+  setPomodoroTime: Dispatch<SetStateAction<number>>;
+}) {
   const [timerActive, setTimerActive] = useState(false);
   const [timerDone, setTimerDone] = useState(false);
   const [seconds, setSeconds] = useState(0);
@@ -65,11 +75,11 @@ function Clock({ setPomodoroTime }) {
 
   return (
     <main className="overflow-hidden">
-      <CanvasBG />
+      <CanvasBG timerActive={timerActive} />
 
       <div
         className={`transition-all duration-500 ease-in-out w-full h-screen flex flex-col flex-1 items-center justify-end sm:justify-center ${
-          timerDone && showAlarmBG ? "bg-red-400 opacity-0" : "bg-white/0"
+          timerDone && showAlarmBG ? "bg-red-400 opacity-50" : "bg-white/0"
         } `}
       >
         {/*

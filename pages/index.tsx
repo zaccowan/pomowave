@@ -7,7 +7,7 @@ import { useState } from "react";
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
-  const [pomodoroTime, setPomodoroTime] = useState(25 * 60);
+  const [pomodoroTime, setPomodoroTime] = useState<number>(25 * 60);
 
   return (
     <>

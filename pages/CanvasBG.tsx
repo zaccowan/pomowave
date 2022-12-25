@@ -8,7 +8,8 @@ type windowSize = {
   height?: number;
 };
 
-function CanvasBG() {
+function CanvasBG({ timerActive }: { timerActive: boolean }) {
+  console.log(timerActive);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [windowSize, setWindowSize] = useState<windowSize>({
     width: undefined,
@@ -24,7 +25,7 @@ function CanvasBG() {
       step: 0.1,
     },
     amplitude: {
-      value: 50,
+      value: 200,
       min: -600,
       max: 600,
       step: 1,
@@ -43,17 +44,18 @@ function CanvasBG() {
     },
   });
 
-  const ref = useRef({ freq: frequency });
+  //Get window width and height
   useEffect(() => {
-    //
-    //Bypass server side rendering in next js
     if (isBrowser) {
       setWindowSize({
         width: window.innerWidth,
         height: window.innerHeight,
       });
     }
-    //
+  }, [windowSize.height, windowSize.width]);
+
+  //Canvas Simulation
+  useEffect(() => {
     //Canvas Setup
     const canvas = canvasRef.current;
     if (!canvas) {
@@ -63,26 +65,46 @@ function CanvasBG() {
     if (!c || c === null) {
       return;
     }
+    if (!windowSize.height || !windowSize.width) {
+      return;
+    }
 
-    let increment = frequency;
+    var increment = frequency;
+
     function animate() {
       window.requestAnimationFrame(animate);
       if (!windowSize.height || !windowSize.width) {
         return;
       }
-      c?.clearRect(0, 0, windowSize.width, windowSize.height);
+      // c?.clearRect(0, 0, windowSize.width, windowSize.height);
+
       c?.beginPath();
-      c?.moveTo(0, windowSize.height * yPos);
+      c?.moveTo(0, yPos);
       for (let i = 0; i < windowSize.width; i++) {
-        c?.lineTo(i, yPos + Math.sin(i * length + increment) * amplitude);
+        c?.lineTo(
+          i,
+          yPos +
+            Math.sin(i * length + increment) * amplitude * Math.sin(increment)
+        );
       }
+      c!.strokeStyle = `hsl(${timerActive === true ? "0" : "138"}, 69.2%, ${
+        100 - 42 * Math.sin(increment)
+      }%)`;
       c?.stroke();
 
       increment += frequency;
     }
 
     animate();
-  }, [windowSize.height, windowSize.width, yPos, amplitude, length, frequency]);
+  }, [
+    windowSize.height,
+    windowSize.width,
+    yPos,
+    amplitude,
+    length,
+    frequency,
+    timerActive,
+  ]);
 
   return (
     <>
