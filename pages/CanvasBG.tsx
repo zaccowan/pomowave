@@ -8,20 +8,35 @@ type windowSize = {
   height?: number;
 };
 
-function CanvasBG({ timerActive }: { timerActive: boolean }) {
+function CanvasBG({
+  timerActive,
+  timeRemaining,
+  totalTime,
+}: {
+  timerActive: boolean;
+  timeRemaining: number;
+  totalTime: number;
+}) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [windowSize, setWindowSize] = useState<windowSize>({
     width: undefined,
     height: undefined,
   });
-  const [tick, setTick] = useState(0);
+
+  const [percentComplete, setPercentComplete] = useState(
+    timeRemaining / totalTime
+  );
+
+  useEffect(() => {
+    setPercentComplete(timeRemaining / totalTime);
+  }, [timeRemaining, totalTime, setPercentComplete]);
 
   const { yOffset, amplitude, length, frequency } = useControls({
     yOffset: {
       value: 0.85,
       min: 0,
       max: 1,
-      step: 0.01,
+      step: 0.0001,
     },
     amplitude: {
       value: 30,
@@ -79,17 +94,17 @@ function CanvasBG({ timerActive }: { timerActive: boolean }) {
 
       c?.clearRect(0, 0, windowSize.width, windowSize.height);
       c?.beginPath();
-      c?.moveTo(0, windowSize.height * yOffset);
+      c?.moveTo(0, windowSize.height * (yOffset * percentComplete));
       for (let i = 0; i < windowSize.width; i++) {
         c?.lineTo(
           i,
-          windowSize.height * yOffset +
+          windowSize.height * (yOffset * percentComplete) +
             Math.sin(i * length + increment) * amplitude * Math.sin(increment)
         );
       }
       c?.lineTo(windowSize.width, windowSize.height);
       c?.lineTo(0, windowSize.height);
-      c?.lineTo(0, windowSize.height * yOffset);
+      c?.lineTo(0, windowSize.height * (yOffset * percentComplete));
       c!.fillStyle = !timerActive
         ? `rgba(248, 113, 113, 1)`
         : `rgb(74, 222, 128, 1)`;
@@ -109,6 +124,7 @@ function CanvasBG({ timerActive }: { timerActive: boolean }) {
     length,
     frequency,
     timerActive,
+    percentComplete,
   ]);
 
   return (

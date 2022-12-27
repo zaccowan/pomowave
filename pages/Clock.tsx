@@ -18,13 +18,15 @@ function Clock({
   const [timerDone, setTimerDone] = useState(false);
   const [seconds, setSeconds] = useState(0);
   const [minutes, setMinutes] = useState(25);
-  const [totalTime, setTotalTime] = useState(seconds + minutes * 60);
+  const [timeRemaining, setTimeRemaining] = useState(seconds + minutes * 60);
+
   const [showAlarmBG, setShowAlarmBG] = useState(true);
   const [displayTimeSettings, setDisplayTimeSettings] = useState(false);
   const [play, { stop }] = useSound("EarlyRiser.mp3");
+  const timeBase = 1000;
 
   const resetTimer = useCallback(() => {
-    setTotalTime(seconds + minutes * 60);
+    setTimeRemaining(seconds + minutes * 60);
     setTimerActive(false);
     setTimerDone(false);
     stop();
@@ -36,8 +38,8 @@ function Clock({
 
   //Sending State back to Head
   useEffect(() => {
-    setPomodoroTime(totalTime);
-  }, [totalTime, setPomodoroTime]);
+    setPomodoroTime(timeRemaining);
+  }, [timeRemaining, setPomodoroTime]);
 
   useEffect(() => {
     const flash = setInterval(() => setShowAlarmBG(!showAlarmBG), 500);
@@ -55,9 +57,9 @@ function Clock({
 
   useEffect(() => {
     function decrementTime() {
-      if (totalTime > 0) {
-        setTotalTime((currentTime) => currentTime - 1);
-      } else if (totalTime == 0) {
+      if (timeRemaining > 0) {
+        setTimeRemaining((currentTime) => currentTime - 1);
+      } else if (timeRemaining == 0) {
         setTimerActive(false);
         setTimerDone(true);
         play();
@@ -66,16 +68,20 @@ function Clock({
 
     const id = timerActive
       ? setInterval(() => decrementTime(), 1000)
-      : setInterval(() => setTotalTime((currentTime) => currentTime), 1000);
+      : setInterval(() => setTimeRemaining((currentTime) => currentTime), 1000);
 
     return () => {
       clearInterval(id);
     };
-  }, [timerActive, totalTime, play]);
+  }, [timerActive, timeRemaining, play]);
 
   return (
     <main className="overflow-hidden">
-      <CanvasBG timerActive={timerActive} />
+      <CanvasBG
+        timerActive={timerActive}
+        timeRemaining={timeRemaining}
+        totalTime={minutes * 60 + seconds}
+      />
 
       <div
         className={`transition-all duration-500 ease-in-out w-full h-screen flex flex-col flex-1 items-center justify-end sm:justify-center ${
@@ -143,11 +149,15 @@ function Clock({
         >
           {`
           ${
-            totalTime / 60 < 10
-              ? `0${Math.floor(totalTime / 60)} :`
-              : `${Math.floor(totalTime / 60)} :`
+            timeRemaining / 60 < 10
+              ? `0${Math.floor(timeRemaining / 60)} :`
+              : `${Math.floor(timeRemaining / 60)} :`
           }
-          ${totalTime % 60 < 10 ? ` 0${totalTime % 60}` : ` ${totalTime % 60}`} 
+          ${
+            timeRemaining % 60 < 10
+              ? ` 0${timeRemaining % 60}`
+              : ` ${timeRemaining % 60}`
+          } 
         `}
         </h1>
 
