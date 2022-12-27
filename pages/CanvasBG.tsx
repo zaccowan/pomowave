@@ -25,7 +25,7 @@ function CanvasBG({ timerActive }: { timerActive: boolean }) {
       step: 0.1,
     },
     amplitude: {
-      value: 200,
+      value: 30,
       min: -600,
       max: 600,
       step: 1,
@@ -37,7 +37,7 @@ function CanvasBG({ timerActive }: { timerActive: boolean }) {
       step: 0.001,
     },
     frequency: {
-      value: 0.01,
+      value: 0.02,
       min: -1,
       max: 1,
       step: 0.01,
@@ -76,8 +76,8 @@ function CanvasBG({ timerActive }: { timerActive: boolean }) {
       if (!windowSize.height || !windowSize.width) {
         return;
       }
-      // c?.clearRect(0, 0, windowSize.width, windowSize.height);
 
+      c?.clearRect(0, 0, windowSize.width, windowSize.height);
       c?.beginPath();
       c?.moveTo(0, yPos);
       for (let i = 0; i < windowSize.width; i++) {
@@ -87,10 +87,13 @@ function CanvasBG({ timerActive }: { timerActive: boolean }) {
             Math.sin(i * length + increment) * amplitude * Math.sin(increment)
         );
       }
-      c!.strokeStyle = `hsl(${timerActive === true ? "0" : "138"}, 69.2%, ${
-        100 - 42 * Math.sin(increment)
-      }%)`;
+      c?.lineTo(windowSize.width, windowSize.height);
+      c?.lineTo(0, windowSize.height);
+      c?.lineTo(0, yPos);
+      c!.fillStyle = `rgba(248,113,113,1)`;
+      c!.strokeStyle = `rgba(248,113,113,1)`;
       c?.stroke();
+      c?.fill();
 
       increment += frequency;
     }
@@ -109,9 +112,6 @@ function CanvasBG({ timerActive }: { timerActive: boolean }) {
   return (
     <>
       <canvas
-        onClick={() => {
-          console.log(windowSize.height);
-        }}
         ref={canvasRef}
         className="-z-10 absolute top-0 bottom-0 right-0 left-0"
         width={windowSize.width}
