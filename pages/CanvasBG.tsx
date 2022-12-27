@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useControls } from "leva";
+import { Leva, useControls } from "leva";
 
 const isBrowser = typeof window !== "undefined" ? true : false;
 
@@ -9,7 +9,6 @@ type windowSize = {
 };
 
 function CanvasBG({ timerActive }: { timerActive: boolean }) {
-  console.log(timerActive);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [windowSize, setWindowSize] = useState<windowSize>({
     width: undefined,
@@ -17,12 +16,12 @@ function CanvasBG({ timerActive }: { timerActive: boolean }) {
   });
   const [tick, setTick] = useState(0);
 
-  const { yPos, amplitude, length, frequency } = useControls({
-    yPos: {
-      value: 500,
+  const { yOffset, amplitude, length, frequency } = useControls({
+    yOffset: {
+      value: 0.85,
       min: 0,
-      max: windowSize.height,
-      step: 0.1,
+      max: 1,
+      step: 0.01,
     },
     amplitude: {
       value: 30,
@@ -44,7 +43,7 @@ function CanvasBG({ timerActive }: { timerActive: boolean }) {
     },
   });
 
-  //Get window width and height
+  //Get window properties
   useEffect(() => {
     if (isBrowser) {
       setWindowSize({
@@ -53,6 +52,8 @@ function CanvasBG({ timerActive }: { timerActive: boolean }) {
       });
     }
   }, [windowSize.height, windowSize.width]);
+
+  const ref = useRef({ prevIncrement: 0 });
 
   //Canvas Simulation
   useEffect(() => {
@@ -69,8 +70,7 @@ function CanvasBG({ timerActive }: { timerActive: boolean }) {
       return;
     }
 
-    var increment = frequency;
-
+    var increment = ref.current.prevIncrement;
     function animate() {
       window.requestAnimationFrame(animate);
       if (!windowSize.height || !windowSize.width) {
@@ -79,30 +79,32 @@ function CanvasBG({ timerActive }: { timerActive: boolean }) {
 
       c?.clearRect(0, 0, windowSize.width, windowSize.height);
       c?.beginPath();
-      c?.moveTo(0, yPos);
+      c?.moveTo(0, windowSize.height * yOffset);
       for (let i = 0; i < windowSize.width; i++) {
         c?.lineTo(
           i,
-          yPos +
+          windowSize.height * yOffset +
             Math.sin(i * length + increment) * amplitude * Math.sin(increment)
         );
       }
       c?.lineTo(windowSize.width, windowSize.height);
       c?.lineTo(0, windowSize.height);
-      c?.lineTo(0, yPos);
-      c!.fillStyle = `rgba(248,113,113,1)`;
-      c!.strokeStyle = `rgba(248,113,113,1)`;
-      c?.stroke();
+      c?.lineTo(0, windowSize.height * yOffset);
+      c!.fillStyle = !timerActive
+        ? `rgba(248, 113, 113, 1)`
+        : `rgb(74, 222, 128, 1)`;
       c?.fill();
 
+      // console.log(increment);
       increment += frequency;
+      ref.current.prevIncrement = increment;
     }
 
     animate();
   }, [
     windowSize.height,
     windowSize.width,
-    yPos,
+    yOffset,
     amplitude,
     length,
     frequency,
@@ -111,6 +113,7 @@ function CanvasBG({ timerActive }: { timerActive: boolean }) {
 
   return (
     <>
+      <Leva hidden />
       <canvas
         ref={canvasRef}
         className="-z-10 absolute top-0 bottom-0 right-0 left-0"
