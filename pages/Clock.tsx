@@ -94,7 +94,7 @@ function Clock({
           } `}
         >
           {/*
-           * Display Edit Clock Overlay
+           * Edit Clock Overlay
            */}
           {displayTimeSettings && (
             <div className="z-50 absolute top-48 bottom-48 left-48 right-48 flex flex-col space-y-8 items-center justify-center rounded-xl bg-black/30 backdrop-blur-lg">
@@ -118,7 +118,7 @@ function Clock({
                       setMinutes(e.target.valueAsNumber);
                     }}
                     type="number"
-                    defaultValue={25}
+                    defaultValue={minutes}
                     min="0"
                     max="60"
                     className="bg-transparent border-4 outline-none rounded-xl text-center text-3xl py-4 font-bold text-white scroll-none"
@@ -133,7 +133,7 @@ function Clock({
                     }}
                     required={true}
                     type="number"
-                    defaultValue={0}
+                    defaultValue={seconds}
                     min="0"
                     max="60"
                     className="bg-transparent border-4 outline-none rounded-xl text-center text-3xl py-4 font-bold text-white"

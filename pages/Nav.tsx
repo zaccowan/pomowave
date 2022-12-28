@@ -34,11 +34,18 @@ function Nav() {
     { title: "Task 3" },
   ]);
 
+  function removeTask(index: number) {
+    tasks.splice(index, 1);
+  }
+  function addTask(title: string) {
+    tasks.push({ title });
+  }
+
   return (
-    <div className="absolute top-0 left-0 right-0 bottom-0">
+    <div className="absolute top-0 left-0 right-0 bottom-0 pointer-events-none">
       <div
         onClick={() => setOpen(!open)}
-        className="absolute right-5 top-5  p-4 rounded-full bg-transparent hover:bg-black cursor-pointer transition-all duration-300 group hover:scale-110"
+        className=" pointer-events-auto absolute right-5 top-5  p-4 rounded-full bg-transparent hover:bg-black cursor-pointer transition-all duration-300 group hover:scale-110"
       >
         <Bars3Icon
           height={40}
@@ -49,20 +56,23 @@ function Nav() {
       </div>
 
       <motion.div
-        className=" -z-10 bg-black/50 rounded-br-2xl text-white flex flex-col items-center justify-center gap-4 w-48 px-6 py-4"
+        className="pointer-event-auto -z-10 bg-black/30 backdrop-blur-lg rounded-br-2xl text-white flex flex-col items-center justify-center gap-4 w-48 px-6 py-4"
         initial={animation.initial}
         animate={controls}
         transition={{ duration: 0.25 }}
       >
         <>
           <h1 className="text-3xl font-bold ">Tasks</h1>
-          <div className="cursor-pointer px-4 py-2 bg-blue-400 hover:bg-blue-500 rounded-xl w-full text-center font-semibold">
+          <div
+            onClick={() => addTask(`Task ${tasks.length + 1}`)}
+            className="pointer-events-auto cursor-pointer px-4 py-2 bg-blue-400 hover:bg-blue-500 rounded-xl w-full text-center font-semibold select-none"
+          >
             Add Task
           </div>
           {tasks.map((task, index) => {
             return (
               <Task
-                onClick={() => tasks.splice(index, 1)}
+                onClick={() => removeTask(index)}
                 key={index}
                 taskTitle={task.title}
               />
