@@ -8,6 +8,9 @@ import React, {
 import { XCircleIcon } from "@heroicons/react/24/outline";
 import useSound from "use-sound";
 import CanvasBG from "./CanvasBG";
+import Nav from "./Nav";
+
+import { motion, AnimatePresence } from "framer-motion";
 
 function Clock({
   setPomodoroTime,
@@ -83,71 +86,73 @@ function Clock({
         totalTime={minutes * 60 + seconds}
       />
 
-      <div
-        className={`transition-all duration-500 ease-in-out w-full h-screen flex flex-col flex-1 items-center justify-end sm:justify-center ${
-          timerDone && showAlarmBG ? "bg-red-400 opacity-50" : "bg-white/0"
-        } `}
-      >
-        {/*
-         * Display Edit Clock Overlay
-         */}
-        {displayTimeSettings && (
-          <div className="z-50 absolute top-48 bottom-48 left-48 right-48 flex flex-col space-y-8 items-center justify-center rounded-xl bg-black/30 backdrop-blur-lg">
-            <div
-              onClick={() => setDisplayTimeSettings(!displayTimeSettings)}
-              className="absolute top-5 right-5 cursor-pointer"
-            >
-              <XCircleIcon
-                width={72}
-                height={72}
-                className="opacity-90 text-red-400 drop-shadow-md"
-              />
-            </div>
-            <form className="space-y-4">
-              <div className="flex space-x-4">
-                <h1 className="text-white text-6xl font-bold">Minutes</h1>
-                <input
-                  required={true}
-                  name="minutes"
-                  onChange={(e) => {
-                    setMinutes(e.target.valueAsNumber);
-                  }}
-                  type="number"
-                  defaultValue={25}
-                  min="0"
-                  max="60"
-                  className="bg-transparent border-4 outline-none rounded-xl text-center text-3xl py-4 font-bold text-white scroll-none"
-                />
-              </div>
-              <div className="flex space-x-4">
-                <h1 className="text-white text-6xl font-bold">Seconds</h1>
-                <input
-                  name="seconds"
-                  onChange={(e) => {
-                    setSeconds(e.target.valueAsNumber);
-                  }}
-                  required={true}
-                  type="number"
-                  defaultValue={0}
-                  min="0"
-                  max="60"
-                  className="bg-transparent border-4 outline-none rounded-xl text-center text-3xl py-4 font-bold text-white"
-                />
-              </div>
-            </form>
-          </div>
-        )}
-
-        {/*
-         * Display Time
-         */}
-        <h1
-          onClick={() => setDisplayTimeSettings(!displayTimeSettings)}
-          className={`${
-            timerActive ? "text-9xl" : "text-6xl"
-          } transition-all font-bold px-20 py-20 cursor-pointer rounded-xl bg-gray-400/10 hover:bg-gray-400/30 hover:scale-105 hover:shadow-lg backdrop-blur-sm m-4`}
+      <div className="">
+        {/* Clock Section */}
+        <div
+          className={`transition-all duration-500 ease-in-out w-full h-screen flex flex-col flex-1 items-center justify-end sm:justify-center ${
+            timerDone && showAlarmBG ? "bg-red-400 opacity-50" : "bg-white/0"
+          } `}
         >
-          {`
+          {/*
+           * Display Edit Clock Overlay
+           */}
+          {displayTimeSettings && (
+            <div className="z-50 absolute top-48 bottom-48 left-48 right-48 flex flex-col space-y-8 items-center justify-center rounded-xl bg-black/30 backdrop-blur-lg">
+              <div
+                onClick={() => setDisplayTimeSettings(!displayTimeSettings)}
+                className="absolute top-5 right-5 cursor-pointer"
+              >
+                <XCircleIcon
+                  width={72}
+                  height={72}
+                  className="opacity-90 text-red-400 drop-shadow-md"
+                />
+              </div>
+              <form className="space-y-4">
+                <div className="flex space-x-4">
+                  <h1 className="text-white text-6xl font-bold">Minutes</h1>
+                  <input
+                    required={true}
+                    name="minutes"
+                    onChange={(e) => {
+                      setMinutes(e.target.valueAsNumber);
+                    }}
+                    type="number"
+                    defaultValue={25}
+                    min="0"
+                    max="60"
+                    className="bg-transparent border-4 outline-none rounded-xl text-center text-3xl py-4 font-bold text-white scroll-none"
+                  />
+                </div>
+                <div className="flex space-x-4">
+                  <h1 className="text-white text-6xl font-bold">Seconds</h1>
+                  <input
+                    name="seconds"
+                    onChange={(e) => {
+                      setSeconds(e.target.valueAsNumber);
+                    }}
+                    required={true}
+                    type="number"
+                    defaultValue={0}
+                    min="0"
+                    max="60"
+                    className="bg-transparent border-4 outline-none rounded-xl text-center text-3xl py-4 font-bold text-white"
+                  />
+                </div>
+              </form>
+            </div>
+          )}
+
+          {/*
+           * Display Time
+           */}
+          <h1
+            onClick={() => setDisplayTimeSettings(!displayTimeSettings)}
+            className={`${
+              timerActive ? "text-9xl" : "text-6xl"
+            } transition-all font-bold px-20 py-20 cursor-pointer rounded-xl bg-gray-400/10 hover:bg-gray-400/30 hover:scale-105 hover:shadow-lg backdrop-blur-sm m-4`}
+          >
+            {`
           ${
             timeRemaining / 60 < 10
               ? `0${Math.floor(timeRemaining / 60)} :`
@@ -159,13 +164,13 @@ function Clock({
               : ` ${timeRemaining % 60}`
           } 
         `}
-        </h1>
+          </h1>
 
-        <div className="w-full sm:w-8/12 flex items-center justify-center flex-col sm:flex-row z-40">
-          {!timerDone && (
-            <h1
-              onClick={() => setTimerActive(!timerActive)}
-              className={`w-full sm:w-1/2 transition-all duration-700 px-4 py-10 xs: sm:rounded-l-xl cursor-pointer flex items-center justify-center 
+          <div className="w-full sm:w-8/12 flex items-center justify-center flex-col sm:flex-row z-40">
+            {!timerDone && (
+              <h1
+                onClick={() => setTimerActive(!timerActive)}
+                className={`w-full sm:w-1/2 transition-all duration-700 px-4 py-10 xs: sm:rounded-l-xl cursor-pointer flex items-center justify-center 
           uppercase text-white font-extrabold text-4xl
           ${
             !timerActive
@@ -173,21 +178,24 @@ function Clock({
               : "bg-red-400 hover:bg-red-500"
           } 
         `}
-            >
-              {`${!timerActive ? "start" : "stop"}`}
-            </h1>
-          )}
-          <h1
-            onClick={() => resetTimer()}
-            className={`w-full sm:w-1/2 transition-all duration-700 px-4 py-10 ${
-              timerDone ? "sm:w-full sm:rounded-xl" : "sm:rounded-r-xl"
-            }  cursor-pointer flex items-center justify-center 
+              >
+                {`${!timerActive ? "start" : "stop"}`}
+              </h1>
+            )}
+            <h1
+              onClick={() => resetTimer()}
+              className={`w-full sm:w-1/2 transition-all duration-700 px-4 py-10 ${
+                timerDone ? "sm:w-full sm:rounded-xl" : "sm:rounded-r-xl"
+              }  cursor-pointer flex items-center justify-center 
           uppercase text-white font-extrabold text-4xl bg-yellow-400 hover:bg-yellow-500 text-center
         `}
-          >
-            Restart Timer
-          </h1>
+            >
+              Restart Timer
+            </h1>
+          </div>
         </div>
+        {/* Task Section */}
+        <Nav />
       </div>
     </main>
   );
