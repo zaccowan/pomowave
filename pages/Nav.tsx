@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { MutableRefObject, useEffect, useRef, useState } from "react";
 import { Bars3Icon } from "@heroicons/react/24/solid";
 import { motion, AnimatePresence, useAnimationControls } from "framer-motion";
 import Task from "./Task";
@@ -28,16 +28,18 @@ function Nav() {
     }
   }, [open, controls, animation.visible, animation.initial]);
 
-  const [tasks, setTasks] = useState([
-    { title: "Task 1" },
-    { title: "Task 2" },
-    { title: "Task 3" },
-  ]);
+  //Task State
+  const [tasks, setTasks] = useState([{ title: "Finish Pomowave" }]);
+
+  const [doAddTask, setDoAddTask] = useState(false);
+  const taskRef = useRef<HTMLInputElement | null>(null);
 
   function removeTask(index: number) {
     tasks.splice(index, 1);
   }
   function addTask(title: string) {
+    setDoAddTask(!true);
+
     tasks.push({ title });
   }
 
@@ -64,11 +66,26 @@ function Nav() {
         <>
           <h1 className="text-3xl font-bold ">Tasks</h1>
           <div
-            onClick={() => addTask(`Task ${tasks.length + 1}`)}
+            onClick={() => setDoAddTask(!doAddTask)}
             className="pointer-events-auto cursor-pointer px-4 py-2 bg-blue-400 hover:bg-blue-500 rounded-xl w-full text-center font-semibold select-none"
           >
             Add Task
           </div>
+          {doAddTask && (
+            <form
+              onSubmit={() => {
+                if (taskRef.current?.value !== undefined) {
+                  addTask(taskRef.current?.value);
+                }
+              }}
+            >
+              <input
+                ref={taskRef}
+                type=""
+                className="pointer pointer-events-auto text-black"
+              />
+            </form>
+          )}
           {tasks.map((task, index) => {
             return (
               <Task
